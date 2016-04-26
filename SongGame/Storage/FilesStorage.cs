@@ -22,7 +22,7 @@ namespace SongGame.Storage
             files.Clear();
             totalCount = 0;
 
-            foreach(var path in settings.getPaths())
+            foreach (var path in settings.getPaths())
             {
                 files[path] = Directory.GetFiles(path, "*.mp3", SearchOption.AllDirectories).ToList();
                 totalCount += files[path].Count;
@@ -36,22 +36,33 @@ namespace SongGame.Storage
             while (indexes.Count < n)
                 indexes.Add(rnd.Next(totalCount));
 
-            HashSet<string> retFiles = new HashSet<string>(getPathAt(indexes));
+            List<int> sortedIndexes = indexes.ToList();
+            sortedIndexes.Sort();
+
+            HashSet<string> retFiles = new HashSet<string>(getPathAt(sortedIndexes));
             return retFiles;
         }
 
-        private string getPathAt(int i)
+        private IEnumerable<string> getPathAt(List<int> indexes)
         {
             int cur = 0;
 
-            foreach(List<string> value in files.Values)
-            {
-                if (i >= cur && i < cur + value.Count)
-                    return value[i - cur];
-                cur += value.Count;
-            }
+            IEnumerator<List<string>> it = files.Values.GetEnumerator();
+            if (!it.MoveNext())
+                yield break;
 
-            return string.Empty;
+            foreach (int i in indexes)
+            {
+                List<string> value = it.Current;
+                if (i >= cur && i < cur + value.Count)
+                    yield return value[i - cur];
+                else
+                {
+                    if (!it.MoveNext())
+                        yield break;
+                    cur += value.Count;
+                }
+            }
         }
     }
 }
