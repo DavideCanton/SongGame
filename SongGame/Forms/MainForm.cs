@@ -1,5 +1,7 @@
 ﻿using SongGame.Forms;
 using SongGame.Players;
+using SongGame.Scores;
+using SongGame.Settings;
 using SongGame.Storage;
 using System;
 using System.Collections.Generic;
@@ -15,20 +17,32 @@ namespace SongGame
         private IStorage storage;
         private IPlayer player;
         private IFormFactory formFactory;
+        private IScoresManager scores;
+        private ISettingsContainer settings;
         private List<SongData> answers;
-        private int correct, selected;
+        private int correct, selected, seconds;
+        private Random rnd;
         private CancellationTokenSource cancelDelayToken;
 
-        public MainForm(IStorage storage, IPlayer player, IFormFactory formFactory)
+        public MainForm(IStorage storage, IPlayer player, IFormFactory formFactory, IScoresManager scores, ISettingsContainer settings)
         {
             this.storage = storage;
             this.player = player;
             this.formFactory = formFactory;
+            this.scores = scores;
+            this.settings = settings;
 
             InitializeComponent();
             questionPanel.Visible = false;
+            rnd = new Random();
 
             storage.reload();
+            ShowScores();
+        }
+
+        private void ShowScores()
+        {
+            scores_lbl.Text = $"Wins: {scores.Ok} - Loses: {scores.Wrongs}";
         }
 
         private void newQuestionBtn_Click(object sender, EventArgs e)
@@ -39,31 +53,44 @@ namespace SongGame
             submitBtn.Enabled = true;
             answerLabel.Text = string.Empty;
             answers = storage.getRandomFiles(4).Select(path => new SongData(path)).ToList();
-            correct = new Random().Next(4);
+            correct = rnd.Next(4);
             choice1.Select();
 
-            choice1.Text = answers[0].GetSongString();
-            choice2.Text = answers[1].GetSongString();
-            choice3.Text = answers[2].GetSongString();
-            choice4.Text = answers[3].GetSongString();
+            choice1.Text = answers[0].SongString.Ellipsis(100);
+            choice2.Text = answers[1].SongString.Ellipsis(100);
+            choice3.Text = answers[2].SongString.Ellipsis(100);
+            choice4.Text = answers[3].SongString.Ellipsis(100);
+
             PlaySong();
         }
 
         private async void PlaySong()
         {
-            if (cancelDelayToken != null)
-                cancelDelayToken.Cancel();
+            var timeout = settings.TimerValue;
+            StopSong();
+
             cancelDelayToken = new CancellationTokenSource();
 
+            showSettingsForm.Enabled = false;
             playSong.Enabled = false;
             player.SetSong(answers[correct].Path);
-            int second = player.GetSongDuration() / 2;
+
+            int second = rnd.Next(timeout, player.SongDuration - timeout);
+
             player.PlaySong(second);
+            seconds = timeout;
 
             try
             {
-                await Task.Delay(TimeSpan.FromSeconds(10), cancelDelayToken.Token);
+                while (seconds > 0)
+                {
+                    time_lbl.Text = $"Tempo rimanente: {seconds} secondi...";
+                    await Task.Delay(TimeSpan.FromSeconds(1), cancelDelayToken.Token);
+                    --seconds;
+                }
                 StopSong();
+                SetWrong(false);
+                UpdateStatus();
             }
             catch (TaskCanceledException)
             {
@@ -74,8 +101,9 @@ namespace SongGame
         private void StopSong()
         {
             player.Stop();
-
+            if (cancelDelayToken != null) cancelDelayToken.Cancel();
             playSong.Enabled = true;
+            showSettingsForm.Enabled = true;
         }
 
         private void playSong_Click(object sender, EventArgs e)
@@ -110,25 +138,41 @@ namespace SongGame
         private void showSettingsForm_Click(object sender, EventArgs e)
         {
             SettingsForm settingsForm = formFactory.createForm<SettingsForm>();
-
-            settingsForm.FormClosed += new FormClosedEventHandler((o, ea) =>
-            {
-                storage.reload();
-            });
+            settingsForm.FormClosed += new FormClosedEventHandler((o, ea) => storage.reload());
             settingsForm.Show();
-        }
+        }        
 
         private void submitBtn_Click(object sender, EventArgs e)
         {
             if (selected == correct)
-                answerLabel.Text = "Risposta esatta!";
+                SetOk();
             else
-                answerLabel.Text = "Risposta sbagliata! La risposta corretta era: " + answers[correct].GetSongString();
-
-            submitBtn.Enabled = false;
-            playSong.Enabled = false;
-            StopSong();
+                SetWrong(true);
+            UpdateStatus();
         }
 
+        private void UpdateStatus()
+        {
+            ShowScores();
+            StopSong();
+            submitBtn.Enabled = false;
+            playSong.Enabled = false;
+        }
+
+        private void SetOk()
+        {
+            answerLabel.Text = "Risposta esatta!";
+            scores.addOk();
+        }
+
+        private void SetWrong(bool answered)
+        {
+            string message = "";
+            if (answered)
+                message += "Risposta sbagliata! ";
+
+            answerLabel.Text = $"{message}La risposta corretta era: " + answers[correct].SongString;
+            scores.addWrong();
+        }
     }
 }

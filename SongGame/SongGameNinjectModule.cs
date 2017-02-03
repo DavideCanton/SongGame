@@ -1,6 +1,7 @@
 ﻿using Ninject.Modules;
 using SongGame.Forms;
 using SongGame.Players;
+using SongGame.Scores;
 using SongGame.Settings;
 using SongGame.Storage;
 
@@ -12,11 +13,12 @@ namespace SongGame
         {
             Bind<IStorage>().To<FilesStorage>().InSingletonScope();
             Bind<IPlayer>().To<NAudioPlayer>();
+            Bind<IScoresManager>().To<ScoresManager>();
 
             Bind<ISettingsContainer>().ToMethod(ctx =>
             {
-                SettingsContainer sc = new SettingsContainer();
-                sc.loadFromFile("config.json");
+                ISettingsContainer sc = new SettingsContainer();
+                sc.LoadFromFile(Properties.Settings.Default.configPath);
                 return sc;
             }).InSingletonScope();
 

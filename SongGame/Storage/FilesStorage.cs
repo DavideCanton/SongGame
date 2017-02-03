@@ -8,7 +8,7 @@ namespace SongGame.Storage
 {
     public class FilesStorage : IStorage
     {
-        private Dictionary<string, List<string>> files = new Dictionary<string, List<string>>();
+        private IDictionary<string, List<string>> files = new Dictionary<string, List<string>>();
         private ISettingsContainer settings;
         private int totalCount;
 
@@ -29,40 +29,39 @@ namespace SongGame.Storage
             }
         }
 
-        public ISet<string> getRandomFiles(int n)
+        public ISet<string> getRandomFiles(int count)
         {
             Random rnd = new Random();
+
             HashSet<int> indexes = new HashSet<int>();
-            while (indexes.Count < n)
-                indexes.Add(rnd.Next(totalCount));
+            HashSet<string> res = new HashSet<string>();
+            IEnumerable<string> values = files.Values.SelectMany(s => s);
 
-            List<int> sortedIndexes = indexes.ToList();
-            sortedIndexes.Sort();
-
-            HashSet<string> retFiles = new HashSet<string>(getPathAt(sortedIndexes));
-            return retFiles;
-        }
-
-        private IEnumerable<string> getPathAt(List<int> indexes)
-        {
-            int cur = 0;
-
-            IEnumerator<List<string>> it = files.Values.GetEnumerator();
-            if (!it.MoveNext())
-                yield break;
-
-            foreach (int i in indexes)
+            if (totalCount < count)
             {
-                List<string> value = it.Current;
-                if (i >= cur && i < cur + value.Count)
-                    yield return value[i - cur];
-                else
+                foreach (string value in values)
+                    res.Add(value);
+            }
+            else
+            {
+                while (indexes.Count < count)
                 {
-                    if (!it.MoveNext())
-                        yield break;
-                    cur += value.Count;
+                    int index = rnd.Next(totalCount);
+
+                    if (indexes.Contains(index))
+                        continue;
+
+                    string path = values.ElementAt(index);
+
+                    if (new SongData(path).IsValid)
+                    {
+                        indexes.Add(index);
+                        res.Add(path);
+                    }
                 }
             }
+
+            return res;
         }
     }
 }

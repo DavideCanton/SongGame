@@ -5,6 +5,7 @@
         void SetSong(string path);
         void PlaySong(int second);
         void Stop();
-        int GetSongDuration();
+
+        int SongDuration { get; }
     }
 }

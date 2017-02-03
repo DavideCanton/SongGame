@@ -39,6 +39,8 @@
             this.labelQuestion = new System.Windows.Forms.Label();
             this.playSong = new System.Windows.Forms.Button();
             this.showSettingsForm = new System.Windows.Forms.Button();
+            this.scores_lbl = new System.Windows.Forms.Label();
+            this.time_lbl = new System.Windows.Forms.Label();
             this.questionPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -167,11 +169,31 @@
             this.showSettingsForm.UseVisualStyleBackColor = true;
             this.showSettingsForm.Click += new System.EventHandler(this.showSettingsForm_Click);
             // 
+            // scores_lbl
+            // 
+            this.scores_lbl.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.scores_lbl.AutoSize = true;
+            this.scores_lbl.Location = new System.Drawing.Point(705, 18);
+            this.scores_lbl.Name = "scores_lbl";
+            this.scores_lbl.Size = new System.Drawing.Size(0, 17);
+            this.scores_lbl.TabIndex = 3;
+            this.scores_lbl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // time_lbl
+            // 
+            this.time_lbl.AutoSize = true;
+            this.time_lbl.Location = new System.Drawing.Point(129, 18);
+            this.time_lbl.Name = "time_lbl";
+            this.time_lbl.Size = new System.Drawing.Size(0, 17);
+            this.time_lbl.TabIndex = 4;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(969, 313);
+            this.Controls.Add(this.time_lbl);
+            this.Controls.Add(this.scores_lbl);
             this.Controls.Add(this.showSettingsForm);
             this.Controls.Add(this.questionPanel);
             this.Controls.Add(this.newQuestionBtn);
@@ -197,5 +219,7 @@
         private System.Windows.Forms.Label labelQuestion;
         private System.Windows.Forms.Button playSong;
         private System.Windows.Forms.Button showSettingsForm;
+        private System.Windows.Forms.Label scores_lbl;
+        private System.Windows.Forms.Label time_lbl;
     }
 }

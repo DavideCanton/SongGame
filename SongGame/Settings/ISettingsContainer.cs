@@ -5,9 +5,12 @@ namespace SongGame.Settings
     public interface ISettingsContainer
     {
         IEnumerable<string> getPaths();
-        void addPath(string path);
-        void removePath(int index);
-        void loadFromFile(string path);
-        void saveToFile(string path);
+        void AddPath(string path);
+        void RemovePath(int index);
+        void SetPaths(IEnumerable<string> paths);
+        void LoadFromFile(string path);
+        void SaveToFile(string path);
+
+        int TimerValue { get; set; }  
     }
 }

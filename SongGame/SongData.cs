@@ -13,9 +13,20 @@ namespace SongGame
             Tag = File.Create(path).Tag;
         }
 
-        public string GetSongString()
+        public string SongString
         {
-            return Tag.Performers[0] + " - " + Tag.Title;
+            get
+            {
+                return Tag.Performers[0] + " - " + Tag.Title;
+            }
+        }
+
+        public bool IsValid
+        {
+            get
+            {
+                return Tag.Performers.Length > 0 && !string.IsNullOrEmpty(Tag.Performers[0]) && !string.IsNullOrEmpty(Tag.Title);
+            }
         }
     }
 }

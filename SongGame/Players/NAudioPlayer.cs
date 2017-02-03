@@ -1,16 +1,23 @@
 ﻿using NAudio.Wave;
+using System;
 
 namespace SongGame.Players
 {
-    public class NAudioPlayer : IPlayer
+    public class NAudioPlayer : IPlayer, IDisposable
     {
         private IWavePlayer player;
         private AudioFileReader reader;
 
+        public int SongDuration { get; private set; }
+
         public void SetSong(string path)
         {
+            if (player != null) player.Dispose();
+            if (reader != null) reader.Dispose();
+
             player = new WaveOut();
             reader = new AudioFileReader(path);
+            SongDuration = (int)reader.TotalTime.TotalSeconds;
         }
 
         public void PlaySong(int second)
@@ -18,8 +25,6 @@ namespace SongGame.Players
             reader.Skip(second);
             player.Init(reader);
             player.Play();
-
-            player.PlaybackStopped += Player_PlaybackStopped;
         }
 
         public void Stop()
@@ -28,15 +33,27 @@ namespace SongGame.Players
                 player.Stop();
         }
 
-        private void Player_PlaybackStopped(object sender, StoppedEventArgs e)
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
         {
-            reader.Dispose();
-            player.Dispose();
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    reader.Dispose();
+                    player.Dispose();
+                }
+
+                disposedValue = true;
+            }
         }
 
-        public int GetSongDuration()
+        public void Dispose()
         {
-            return reader.TotalTime.Seconds;
+            Dispose(true);
         }
+        #endregion
     }
 }
