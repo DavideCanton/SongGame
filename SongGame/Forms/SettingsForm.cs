@@ -50,8 +50,7 @@ namespace SongGame
         }
         private void removeBtn_Click(object sender, EventArgs e)
         {
-            if (source.Current == null) return;
-            source.RemoveCurrent();
+            source.RemoveAt(selectedIndex);
             source.ResetBindings(false);
             removeBtn.Enabled = false;
             paths.ClearSelected();
