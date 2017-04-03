@@ -5,7 +5,7 @@
         int Ok { get; }
         int Wrongs { get; }
 
-        void addOk();
-        void addWrong();
+        void AddOk();
+        void AddWrong();
     }
 }

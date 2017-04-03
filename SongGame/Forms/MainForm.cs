@@ -23,6 +23,7 @@ namespace SongGame
         private int correct, selected, seconds;
         private Random rnd;
         private CancellationTokenSource cancelDelayToken;
+        private List<RadioButton> choices;
 
         public MainForm(IStorage storage, IPlayer player, IFormFactory formFactory, IScoresManager scores, ISettingsContainer settings)
         {
@@ -38,6 +39,8 @@ namespace SongGame
 
             storage.reload();
             ShowScores();
+
+            choices = new List<RadioButton> { choice1, choice2, choice3, choice4 };
         }
 
         private void ShowScores()
@@ -54,12 +57,13 @@ namespace SongGame
             answerLabel.Text = string.Empty;
             answers = storage.getRandomFiles(4).Select(path => new SongData(path)).ToList();
             correct = rnd.Next(4);
-            choice1.Select();
 
-            choice1.Text = answers[0].SongString.Ellipsis(100);
-            choice2.Text = answers[1].SongString.Ellipsis(100);
-            choice3.Text = answers[2].SongString.Ellipsis(100);
-            choice4.Text = answers[3].SongString.Ellipsis(100);
+            choices[0].Select();
+
+            foreach(Tuple<int, RadioButton> t in choices.Enumerate())
+            {
+                t.Item2.Text = answers[t.Item1].SongString.Ellipsis(100);
+            }
 
             PlaySong();
         }
@@ -111,34 +115,17 @@ namespace SongGame
             PlaySong();
         }
 
-        private void choice1_CheckedChanged(object sender, EventArgs e)
+        private void choice_CheckedChanged(object sender, EventArgs e)
         {
-            if (((RadioButton)sender).Checked)
-                selected = 0;
-        }
-
-        private void choice2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (((RadioButton)sender).Checked)
-                selected = 1;
-        }
-
-        private void choice3_CheckedChanged(object sender, EventArgs e)
-        {
-            if (((RadioButton)sender).Checked)
-                selected = 2;
-        }
-
-        private void choice4_CheckedChanged(object sender, EventArgs e)
-        {
-            if (((RadioButton)sender).Checked)
-                selected = 3;
-        }
+            RadioButton senderBtn = sender as RadioButton;
+            if (senderBtn.Checked)
+                selected = choices.IndexOf(senderBtn);
+        }        
 
         private void showSettingsForm_Click(object sender, EventArgs e)
         {
             SettingsForm settingsForm = formFactory.createForm<SettingsForm>();
-            settingsForm.FormClosed += new FormClosedEventHandler((o, ea) => storage.reload());
+            settingsForm.FormClosed += (o, ea) => storage.reload();
             settingsForm.Show();
         }        
 
@@ -162,17 +149,14 @@ namespace SongGame
         private void SetOk()
         {
             answerLabel.Text = "Risposta esatta!";
-            scores.addOk();
+            scores.AddOk();
         }
 
         private void SetWrong(bool answered)
         {
-            string message = "";
-            if (answered)
-                message += "Risposta sbagliata! ";
-
-            answerLabel.Text = $"{message}La risposta corretta era: " + answers[correct].SongString;
-            scores.addWrong();
+            string message = answered ? "Risposta sbagliata! " : "";
+            answerLabel.Text = $"{message}La risposta corretta era: {answers[correct].SongString}";
+            scores.AddWrong();
         }
     }
 }

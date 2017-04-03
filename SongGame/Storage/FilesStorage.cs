@@ -22,7 +22,7 @@ namespace SongGame.Storage
             files.Clear();
             totalCount = 0;
 
-            foreach (var path in settings.getPaths())
+            foreach (var path in settings.GetPaths())
             {
                 files[path] = Directory.GetFiles(path, "*.mp3", SearchOption.AllDirectories).ToList();
                 totalCount += files[path].Count;
