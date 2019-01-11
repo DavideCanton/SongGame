@@ -41,6 +41,7 @@ namespace SongGame
             ShowScores();
 
             choices = new List<RadioButton> { choice1, choice2, choice3, choice4 };
+            time_lbl.Text = "";
         }
 
         private void ShowScores()
@@ -60,7 +61,7 @@ namespace SongGame
 
             choices[0].Select();
 
-            foreach(Tuple<int, RadioButton> t in choices.Enumerate())
+            foreach (Tuple<int, RadioButton> t in choices.Enumerate())
             {
                 t.Item2.Text = answers[t.Item1].SongString.Ellipsis(100);
             }
@@ -84,7 +85,18 @@ namespace SongGame
             player.PlaySong(second);
             seconds = timeout;
 
-            IProgress<int> p = new Progress<int>(s => time_lbl.Text = $"Tempo rimanente: {s} secondi...");
+            IProgress<int> p = new Progress<int>(s =>
+            {
+                time_lbl.Text = $"Tempo rimanente: {s} secondi...";
+                progressBar.Value = s;
+            });
+
+            IProgress<bool> x = new Progress<bool>(_ =>
+            {
+                StopSong();
+                SetWrong(false);
+                UpdateStatus();
+            });
 
             try
             {
@@ -94,9 +106,8 @@ namespace SongGame
                     await Task.Delay(TimeSpan.FromSeconds(1), cancelDelayToken.Token).ConfigureAwait(false);
                     --seconds;
                 }
-                StopSong();
-                SetWrong(false);
-                UpdateStatus();
+                p.Report(0);
+                x.Report(false);
             }
             catch (TaskCanceledException)
             {

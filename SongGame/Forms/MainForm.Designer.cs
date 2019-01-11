@@ -41,6 +41,7 @@
             this.showSettingsForm = new System.Windows.Forms.Button();
             this.scores_lbl = new System.Windows.Forms.Label();
             this.time_lbl = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.questionPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -184,14 +185,26 @@
             this.time_lbl.AutoSize = true;
             this.time_lbl.Location = new System.Drawing.Point(129, 18);
             this.time_lbl.Name = "time_lbl";
-            this.time_lbl.Size = new System.Drawing.Size(0, 17);
+            this.time_lbl.Size = new System.Drawing.Size(208, 17);
             this.time_lbl.TabIndex = 4;
+            this.time_lbl.Text = "Tempo rimanente: 10 secondi...";
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(344, 18);
+            this.progressBar.Maximum = 10;
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(210, 17);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar.TabIndex = 5;
+            this.progressBar.Value = 10;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(969, 313);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.time_lbl);
             this.Controls.Add(this.scores_lbl);
             this.Controls.Add(this.showSettingsForm);
@@ -221,5 +234,6 @@
         private System.Windows.Forms.Button showSettingsForm;
         private System.Windows.Forms.Label scores_lbl;
         private System.Windows.Forms.Label time_lbl;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
