@@ -19,7 +19,7 @@ namespace SongGame
 
         public static IEnumerable<Tuple<int, T>> Enumerate<T>(this IEnumerable<T> e, int start = 0)
         {
-            return CountFrom(0).Zip(e, Tuple.Create);        
+            return CountFrom(start).Zip(e, Tuple.Create);
         }
 
         private static IEnumerable<int> CountFrom(int v)

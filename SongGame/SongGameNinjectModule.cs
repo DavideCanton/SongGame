@@ -16,18 +16,14 @@ namespace SongGame
             Bind<IPlayer>().To<NAudioPlayer>().InSingletonScope();
             Bind<IScoresManager>().To<ScoresManager>().InSingletonScope();
 
-            Bind<ISettingsContainer>().ToMethod(ctx =>
+            Bind<ISettingsContainer>().ToMethod(_ =>
             {
                 ISettingsContainer sc = new SettingsContainer();
                 sc.LoadFromFile(P.Settings.Default.configPath);
                 return sc;
             }).InSingletonScope();
 
-            Bind<IFormFactory>().ToMethod(ctx =>
-            {
-                FormFactory factory = new FormFactory(Kernel);
-                return factory;
-            });
+            Bind<IFormFactory>().ToMethod(_ => new FormFactory(Kernel));
         }
     }
 }

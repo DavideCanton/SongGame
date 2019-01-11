@@ -12,8 +12,8 @@ namespace SongGame.Players
 
         public void SetSong(string path)
         {
-            if (player != null) player.Dispose();
-            if (reader != null) reader.Dispose();
+            player?.Dispose();
+            reader?.Dispose();
 
             player = new WaveOut();
             reader = new AudioFileReader(path);
@@ -29,8 +29,7 @@ namespace SongGame.Players
 
         public void Stop()
         {
-            if (player != null)
-                player.Stop();
+            player?.Stop();
         }
 
         #region IDisposable Support

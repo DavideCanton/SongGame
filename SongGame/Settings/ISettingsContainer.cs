@@ -11,6 +11,6 @@ namespace SongGame.Settings
         void LoadFromFile(string path);
         void SaveToFile(string path);
 
-        int TimerValue { get; set; }  
+        int TimerValue { get; set; }
     }
 }

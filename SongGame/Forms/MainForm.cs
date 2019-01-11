@@ -14,16 +14,16 @@ namespace SongGame
 {
     public partial class MainForm : Form
     {
-        private IStorage storage;
-        private IPlayer player;
-        private IFormFactory formFactory;
-        private IScoresManager scores;
-        private ISettingsContainer settings;
+        private readonly IStorage storage;
+        private readonly IPlayer player;
+        private readonly IFormFactory formFactory;
+        private readonly IScoresManager scores;
+        private readonly ISettingsContainer settings;
         private List<SongData> answers;
         private int correct, selected, seconds;
-        private Random rnd;
+        private readonly Random rnd;
         private CancellationTokenSource cancelDelayToken;
-        private List<RadioButton> choices;
+        private readonly List<RadioButton> choices;
 
         public MainForm(IStorage storage, IPlayer player, IFormFactory formFactory, IScoresManager scores, ISettingsContainer settings)
         {
@@ -48,7 +48,7 @@ namespace SongGame
             scores_lbl.Text = $"Wins: {scores.Ok} - Loses: {scores.Wrongs}";
         }
 
-        private void newQuestionBtn_Click(object sender, EventArgs e)
+        private async void newQuestionBtn_Click(object sender, EventArgs e)
         {
             player.Stop();
             questionPanel.Visible = true;
@@ -65,10 +65,10 @@ namespace SongGame
                 t.Item2.Text = answers[t.Item1].SongString.Ellipsis(100);
             }
 
-            PlaySong();
+            await PlaySong().ConfigureAwait(false);
         }
 
-        private async void PlaySong()
+        private async Task PlaySong()
         {
             var timeout = settings.TimerValue;
             StopSong();
@@ -84,12 +84,14 @@ namespace SongGame
             player.PlaySong(second);
             seconds = timeout;
 
+            IProgress<int> p = new Progress<int>(s => time_lbl.Text = $"Tempo rimanente: {s} secondi...");
+
             try
             {
                 while (seconds > 0)
                 {
-                    time_lbl.Text = $"Tempo rimanente: {seconds} secondi...";
-                    await Task.Delay(TimeSpan.FromSeconds(1), cancelDelayToken.Token);
+                    p.Report(seconds);
+                    await Task.Delay(TimeSpan.FromSeconds(1), cancelDelayToken.Token).ConfigureAwait(false);
                     --seconds;
                 }
                 StopSong();
@@ -105,14 +107,14 @@ namespace SongGame
         private void StopSong()
         {
             player.Stop();
-            if (cancelDelayToken != null) cancelDelayToken.Cancel();
+            cancelDelayToken?.Cancel();
             playSong.Enabled = true;
             showSettingsForm.Enabled = true;
         }
 
-        private void playSong_Click(object sender, EventArgs e)
+        private async void playSong_Click(object sender, EventArgs e)
         {
-            PlaySong();
+            await PlaySong().ConfigureAwait(false);
         }
 
         private void choice_CheckedChanged(object sender, EventArgs e)
@@ -120,14 +122,14 @@ namespace SongGame
             RadioButton senderBtn = sender as RadioButton;
             if (senderBtn.Checked)
                 selected = choices.IndexOf(senderBtn);
-        }        
+        }
 
         private void showSettingsForm_Click(object sender, EventArgs e)
         {
             SettingsForm settingsForm = formFactory.createForm<SettingsForm>();
             settingsForm.FormClosed += (o, ea) => storage.reload();
             settingsForm.Show();
-        }        
+        }
 
         private void submitBtn_Click(object sender, EventArgs e)
         {

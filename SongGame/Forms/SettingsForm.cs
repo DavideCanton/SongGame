@@ -7,8 +7,8 @@ namespace SongGame
 {
     public partial class SettingsForm : Form
     {
-        private ISettingsContainer settings;
-        private BindingSource source;
+        private readonly ISettingsContainer settings;
+        private readonly BindingSource source;
         private int selectedIndex;
 
         public SettingsForm(ISettingsContainer sc)
@@ -48,22 +48,23 @@ namespace SongGame
                 removeBtn.Enabled = false;
             }
         }
+
         private void removeBtn_Click(object sender, EventArgs e)
         {
             source.RemoveAt(selectedIndex);
             source.ResetBindings(false);
             removeBtn.Enabled = false;
             paths.ClearSelected();
-        }     
+        }
 
         private void cancel_btn_Click(object sender, EventArgs e)
         {
             Close();
-        }        
+        }
 
         private void ok_btn_Click(object sender, EventArgs e)
         {
-            settings.TimerValue = (int) timerValue.Value;
+            settings.TimerValue = (int)timerValue.Value;
             settings.SetPaths(source.Cast<string>());
             settings.SaveToFile(Properties.Settings.Default.configPath);
             Close();
