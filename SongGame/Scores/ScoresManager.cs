@@ -6,12 +6,12 @@ namespace SongGame.Scores
         public int Ok { get; private set; }
         public int Wrongs { get; private set; }
 
-        public void addOk()
+        public void AddOk()
         {
             ++Ok;
         }
 
-        public void addWrong()
+        public void AddWrong()
         {
             ++Wrongs;
         }

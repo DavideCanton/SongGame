@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="configPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\Davide\Documents\GitHub\SongGame\SongGame\config.json</Value>
+      <Value Profile="(Default)">config.json</Value>
     </Setting>
   </Settings>
 </SettingsFile>

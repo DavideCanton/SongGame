@@ -102,7 +102,7 @@
             this.choice4.TabIndex = 5;
             this.choice4.TabStop = true;
             this.choice4.UseVisualStyleBackColor = true;
-            this.choice4.CheckedChanged += new System.EventHandler(this.choice4_CheckedChanged);
+            this.choice4.CheckedChanged += new System.EventHandler(this.choice_CheckedChanged);
             // 
             // choice3
             // 
@@ -113,7 +113,7 @@
             this.choice3.TabIndex = 4;
             this.choice3.TabStop = true;
             this.choice3.UseVisualStyleBackColor = true;
-            this.choice3.CheckedChanged += new System.EventHandler(this.choice3_CheckedChanged);
+            this.choice3.CheckedChanged += new System.EventHandler(this.choice_CheckedChanged);
             // 
             // choice2
             // 
@@ -124,7 +124,7 @@
             this.choice2.TabIndex = 3;
             this.choice2.TabStop = true;
             this.choice2.UseVisualStyleBackColor = true;
-            this.choice2.CheckedChanged += new System.EventHandler(this.choice2_CheckedChanged);
+            this.choice2.CheckedChanged += new System.EventHandler(this.choice_CheckedChanged);
             // 
             // choice1
             // 
@@ -135,7 +135,7 @@
             this.choice1.TabIndex = 2;
             this.choice1.TabStop = true;
             this.choice1.UseVisualStyleBackColor = true;
-            this.choice1.CheckedChanged += new System.EventHandler(this.choice1_CheckedChanged);
+            this.choice1.CheckedChanged += new System.EventHandler(this.choice_CheckedChanged);
             // 
             // labelQuestion
             // 

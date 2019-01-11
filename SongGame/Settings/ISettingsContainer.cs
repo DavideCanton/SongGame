@@ -4,7 +4,7 @@ namespace SongGame.Settings
 {
     public interface ISettingsContainer
     {
-        IEnumerable<string> getPaths();
+        IEnumerable<string> GetPaths();
         void AddPath(string path);
         void RemovePath(int index);
         void SetPaths(IEnumerable<string> paths);

@@ -12,7 +12,7 @@ namespace SongGame.Settings
 
         public int TimerValue { get; set; }
 
-        public IEnumerable<string> getPaths()
+        public IEnumerable<string> GetPaths()
         {
             return paths.AsEnumerable();
         }
@@ -37,7 +37,7 @@ namespace SongGame.Settings
         {
             using (var stream = new StreamReader(path))
             {
-                var obj = JsonConvert.DeserializeAnonymousType(stream.ReadToEnd(), new { paths = new string[0], timerValue = 0 });
+                var obj = JsonConvert.DeserializeObject<JsonSettingsModel>(stream.ReadToEnd());
                 paths.AddRange(obj.paths);
                 TimerValue = obj.timerValue;
             }
@@ -47,7 +47,7 @@ namespace SongGame.Settings
         {
             using (var stream = new StreamWriter(path))
             {
-                var obj = new
+                var obj = new JsonSettingsModel
                 {
                     paths = paths.ToArray(),
                     timerValue = TimerValue
