@@ -4,7 +4,7 @@ namespace SongGame.Storage
 {
     public interface IStorage
     {
-        ISet<string> getRandomFiles(int n);
+        ISet<string> getRandomFiles(int count);
         void reload();
     }
 }

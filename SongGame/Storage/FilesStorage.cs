@@ -8,8 +8,8 @@ namespace SongGame.Storage
 {
     public class FilesStorage : IStorage
     {
-        private IDictionary<string, List<string>> files = new Dictionary<string, List<string>>();
-        private ISettingsContainer settings;
+        private readonly IDictionary<string, List<string>> files = new Dictionary<string, List<string>>();
+        private readonly ISettingsContainer settings;
         private int totalCount;
 
         public FilesStorage(ISettingsContainer settings)
