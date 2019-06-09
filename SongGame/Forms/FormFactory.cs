@@ -1,20 +1,20 @@
-﻿using Ninject;
+﻿using Autofac;
 using System.Windows.Forms;
 
 namespace SongGame.Forms
 {
     public class FormFactory : IFormFactory
     {
-        private IKernel kernel;
+        private readonly IComponentContext container;
 
-        public FormFactory(IKernel kernel)
+        public FormFactory(IComponentContext container)
         {
-            this.kernel = kernel;
+            this.container = container;
         }
 
         public T createForm<T>() where T : Form
         {
-            return kernel.Get<T>();
+            return container.Resolve<T>();
         }
     }
 }
