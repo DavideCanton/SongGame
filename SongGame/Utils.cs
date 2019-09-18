@@ -14,7 +14,7 @@ namespace SongGame
             if (s.Length < length)
                 return s;
 
-            return s.Substring(length) + "...";
+            return $"{s.Substring(length)}...";
         }
 
         public static IEnumerable<Tuple<int, T>> Enumerate<T>(this IEnumerable<T> e, int start = 0)
@@ -22,7 +22,7 @@ namespace SongGame
             return CountFrom(start).Zip(e, Tuple.Create);
         }
 
-        private static IEnumerable<int> CountFrom(int v)
+        public static IEnumerable<int> CountFrom(int v = 0)
         {
             int i = v;
             while (true)

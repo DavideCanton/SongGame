@@ -17,8 +17,10 @@ namespace SongGame
 
             InitializeComponent();
 
-            source = new BindingSource();
-            source.DataSource = settings.GetPaths().ToList();
+            source = new BindingSource
+            {
+                DataSource = settings.GetPaths().ToList()
+            };
             paths.DataSource = source;
             removeBtn.Enabled = false;
 
